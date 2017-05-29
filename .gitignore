@@ -1,0 +1,12 @@
+node_modules
+bower_components
+.idea
+.idea/*
+.tmp
+.sass-cache
+platforms
+*.swp
+*.swo
+*.log
+*.DS_Store
+.env

@@ -1,0 +1,19 @@
+{
+  "name": "ng-stock",
+  "homepage": "https://github.com/ethan1341/ng-stocks",
+  "description": "MEAN Stack Trading App",
+  "main": "app.js",
+  "keywords": [
+    "mean"
+  ],
+  "authors": [
+    "ethan pidcock"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "angular": "^1.6.4",
+    "angular-ui-router": "^0.4.2",
+    "ngAutocomplete": "^1.0.0",
+    "angular-chart.js": "^1.1.1"
+  }
+}

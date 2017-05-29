@@ -1,0 +1,75 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Your Portfolio</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                    <a class="close-link">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <table class="table table-hover margin bottom">
+                            <thead>
+                            <tr>
+                                <th style="width: 1%" class="text-center">No.</th>
+                                <th>Name</th>
+                                <th class="text-center">Date</th>
+                                <th class="text-center">Amount</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="stock in dashboard.stocks track by $index" ng-click="generateGraph(stock.Symbol)">
+                                <td class="text-center">{{$index+1}}</td>
+                                <td>{{stock.Name}}</td>
+                                <td class="text-center small">{{stock.Timestamp | date: 'yyyy-MM-dd HH:mm:ss Z'}}</td>
+                                <td class="text-center"><span class="label label-primary">{{stock.LastPrice}}</span><span class="label label-primary" style="margin-left:5px;">remove</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div><!-- -->
+                    <div class="col-lg-12">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>Stock Price Chart: {{currentGraph.symbol}}</h5>
+                                <div class="pull-right">
+                                    <div class="btn-group" ng-repeat="symbol in graphMap">
+                                        <button type="button" class="  stock-button btn btn-xs btn-white"
+                                                id="{{symbol.symbol}}" ng-click="generateGraph(symbol.symbol)"
+                                                ng-class="{active: symbol.symbol == currentGraph.symbol}">
+                                            {{symbol.symbol}}
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <canvas id="line" class="chart chart-line"
+                                                chart-data="currentGraph.Elements[0].DataSeries.close.values"
+                                                chart-labels="currentGraph.Dates" chart-series="series">
+                                        </canvas>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <canvas id="line" class="chart chart-line" chart-data="graphMap['AAPL'].Elements[0].DataSeries.close.values"
+                             chart-labels="graphMap['AAPL'].Dates" chart-series="series">
+                     </canvas>-->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
