@@ -25,42 +25,79 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="stock in dashboard.stocks track by $index" ng-click="generateGraph(stock.Symbol)">
+                            <tr ng-repeat="stock in dashboard.stocks track by $index">
                                 <td class="text-center">{{$index+1}}</td>
-                                <td>{{stock.Name}}</td>
+                                <td  ng-click="generateGraph(stock.Symbol)">{{stock.Name}}</td>
                                 <td class="text-center small">{{stock.Timestamp | date: 'yyyy-MM-dd HH:mm:ss Z'}}</td>
-                                <td class="text-center"><span class="label label-primary">{{stock.LastPrice}}</span><span class="label label-primary" style="margin-left:5px;">remove</span>
+                                <td class="text-center"><span
+                                        class="label label-primary">{{stock.LastPrice}}</span><span
+                                        class="label label-primary" style="margin-left:5px;"
+                                        ng-click="removeStock(stock.Symbol)">remove</span>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
                     </div><!-- -->
-                    <div class="col-lg-12">
-                        <div class="ibox float-e-margins">
-                            <div class="ibox-title">
-                                <h5>Stock Price Chart: {{currentGraph.symbol}}</h5>
-                                <div class="pull-right">
-                                    <div class="btn-group" ng-repeat="symbol in graphMap">
-                                        <button type="button" class="  stock-button btn btn-xs btn-white"
-                                                id="{{symbol.symbol}}" ng-click="generateGraph(symbol.symbol)"
-                                                ng-class="{active: symbol.symbol == currentGraph.symbol}">
-                                            {{symbol.symbol}}
-                                        </button>
+
+
+                    <div ng-if="realGraph == true">
+                        <div class="col-lg-12">
+                            <div class="ibox float-e-margins">
+                                <div class="ibox-title">
+                                    <h5>Stock Price Chart: {{currentGraph}}</h5>
+                                    <div class="pull-right">
+                                        <div class="btn-group" ng-repeat="symbol in graphMap">
+                                            <button type="button" class="  stock-button btn btn-xs btn-white"
+                                                    id="{{symbol.symbol}}" ng-click="generateGraph(symbol.symbol)"
+                                                    ng-class="{active: symbol.symbol == currentGraph.symbol}">
+                                                {{symbol.symbol}}
+                                            </button>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ibox-content">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <canvas id="line" class="chart chart-line"
+                                                    chart-data="currentGraph.Elements[0].DataSeries.close.values"
+                                                    chart-labels="currentGraph.Dates" chart-series="series">
+                                            </canvas>
+                                        </div>
 
                                     </div>
+
                                 </div>
                             </div>
-                            <div class="ibox-content">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <canvas id="line" class="chart chart-line"
-                                                chart-data="currentGraph.Elements[0].DataSeries.close.values"
-                                                chart-labels="currentGraph.Dates" chart-series="series">
-                                        </canvas>
+                        </div>
+                    </div>
+
+                    <div ng-if="realGraph ==false">
+                        <div class="col-lg-12">
+                            <div class="ibox float-e-margins">
+                                <div class="ibox-title">
+                                    <h5>Please select a ticker from the top navbar</h5>
+                                    <div class="pull-right">
+                                        <div>
+                                            <button type="button" class="  stock-button btn btn-xs btn-white" class="active">
+                                                Sample
+                                            </button>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ibox-content">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <canvas id="line" class="chart chart-line"
+                                                    chart-data="chart.values"
+                                                    chart-labels="chart.dates" chart-series="series">
+                                            </canvas>
+                                        </div>
+
                                     </div>
 
                                 </div>
-
                             </div>
                         </div>
                     </div>

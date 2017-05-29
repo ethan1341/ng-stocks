@@ -1,3 +1,7 @@
+/**
+ * $State routing(angular.ui) uses abstracts for inheritance
+ */
+
 angular.module("ngStocks")
     .config(function ($stateProvider) {
         $stateProvider
@@ -31,6 +35,10 @@ angular.module("ngStocks")
                 url: "/redirect",
                 controller: "redirectController",
                 templateUrl: "app/html/login-redirect.html"
-            });
-
+            })
+            .state("error", {
+                url: "/error",
+                controller: "errorController",
+                templateUrl: "app/html/error.html"
+            });;
     });

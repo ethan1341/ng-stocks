@@ -1,3 +1,7 @@
+/**
+ * Generic request function used with ALL API requests
+ */
+
 app.service('requestWrapper', function($http, $q){
 
     var basePath = 'http://localhost:4000';
