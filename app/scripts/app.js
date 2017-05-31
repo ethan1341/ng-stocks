@@ -75,22 +75,14 @@ angular.module("ngStocks")
                 templateUrl: "app/html/error.html"
             });;
     });
-
 /**
  * The Parent Controller(Abstract) for profile and overview. Must functions will be called and ran in this controller for re-usability
  */
 
-/**
- * IMPORTANT
- * $scope.dashboard.stocks is what updates that STOCK TABLE
- * $scope.graphMap contains ALL THE GRAPH DATA
- * $scope.currentGraph contains the DATA FOR THE GRAPH WANTING TO BE DISPLAYED
- * $scope.graphMap is also the map that shows the symbols in the small grey buttons
- */
 
-angular.module('ngStocks').controller('dashboardController', ['$scope', 'stockService', '$q', 'API', '$window','SAMPLE_DATA','$state',function ($scope, stockService, $q, API, $window,SAMPLE_DATA,$state) {
+angular.module('ngStocks').controller('dashboardController', ['$scope', 'stockService', '$q', 'API', '$window', 'SAMPLE_DATA', '$state', function ($scope, stockService, $q, API, $window, SAMPLE_DATA, $state) {
     $scope.dashboard = {
-        stocks:{}
+        stocks: {}
     };
     $scope.currentGraph;
     $scope.returnedSymbols;
@@ -116,7 +108,6 @@ angular.module('ngStocks').controller('dashboardController', ['$scope', 'stockSe
         };
 
         stockAPIURL(ticker).then(function (URL) {
-            console.log('this ran')
             stockService.stockTickerAutoComplete('GET', URL, {}, {}, function (data) {
                 $scope.returnedSymbols = data.data.ResultSet.Result;
                 console.log($scope.returnedSymbols)
@@ -124,9 +115,10 @@ angular.module('ngStocks').controller('dashboardController', ['$scope', 'stockSe
                 console.log('error', error)
             })
         }, function (error) {
-            console.log('there was an error',error)
+            console.log('there was an error', error)
         })
     };
+
     /**
      * Post a stock selected from the INPUT in the NAVBAR:HTML
      * @param symbol
@@ -141,10 +133,10 @@ angular.module('ngStocks').controller('dashboardController', ['$scope', 'stockSe
             stockService.postStockSymbol('POST', API.userStocks, data, {headers: {'Content-Type': 'application/json'}}, function (data) {
                 var stockSymbol = data.data.Symbol;
                 console.log(data);
-                if(data.data.status == 'existed'){
+                if (data.data.status == 'existed') {
                     console.log('existed');
-                }else{
-                    console.log('did not exist');
+                } else {
+                    $scope.dashboard.stocks[stockSymbol] = data.data
                 }
 
                 //$scope.getStockCharts();
@@ -153,6 +145,7 @@ angular.module('ngStocks').controller('dashboardController', ['$scope', 'stockSe
         }
 
     };
+
     /**
      * Gets all the stocks the user has chosen to follow
      * @returns {Promise}
@@ -160,10 +153,10 @@ angular.module('ngStocks').controller('dashboardController', ['$scope', 'stockSe
     $scope.getStocks = function () {
         var deferred = $q.defer();
         stockService.getUserStocks('GET', API.userStocks, {}, {}, function (data) {
-            for(var i = 0; i < data.data.length;i++){
-                var mapKey = data.data[i].Symbol;
-                $scope.dashboard.stocks[mapKey] = data.data[i];
-            };
+            $scope.dashboard.stocks = data.data;
+            console.log($scope.dashboard.stocks);
+            var graphKey = Object.keys($scope.dashboard.stocks)[0];
+            $scope.currentGraph = $scope.dashboard.stocks[graphKey].Graph;
             deferred.resolve($scope.dashboard.stocks);
         }, function (err) {
             deferred.reject(err)
@@ -175,48 +168,20 @@ angular.module('ngStocks').controller('dashboardController', ['$scope', 'stockSe
      * @param symbol i.e  string:APPL
      */
     $scope.removeStock = function (symbol) {
-        console.log(symbol);
         stockService.removeUserStock('POST', API.removeStock, {symbol: symbol}, {headers: {'Content-Type': 'application/json'}}, function (data) {
-            for(var i = 0; i < $scope.dashboard.stocks.length;i++){
-              if($scope.dashboard.stocks[symbol].Symbol == symbol){
-                  delete $scope.dashboard.stocks[symbol]
-              }
-            };
+            delete $scope.dashboard.stocks[symbol]
         }, function (err) {
             console.log(err);
         });
     };
+
     /**
      * Returns data which is stored in scope variables allowing angular chart js to make graphs
      */
-    $scope.getStockCharts = function () {
-        console.log('e');
-        stockService.getUserStockCharts('GET', API.stockCharts, {}, {}, function (data) {
-           if(data.data == '404'){
-               $window.sessionStorage.clear();
-               $state.go('login')
-           };
-            if (data.data.length == 0) {
-                $scope.realGraph = false ;
-            } else {
-                $scope.realGraph = true ;
-                for (var i = 0; i < data.data.length; i++) {
-                    var symbol = data.data[i].Elements[0].Symbol;
-                    var name = data.data[i].Elements[0].Name;
-                    console.log( $scope.dashboard.stocks);
-                    $scope.dashboard.stocks[symbol].Graph = data.data[i];
-                }
-                $scope.currentGraph = $scope.dashboard.stocks[ data.data[0].Elements[0].Symbol ].Graph
-
-            }
-        }, function (error) {
-            console.log(error)
-        })
-    };
-
-    $scope.getStocks().then(function(){
-        $scope.getStockCharts();
-    },function(err){console.log(err)});
+    $scope.getStocks().then(function (data) {
+    }, function (err) {
+        console.log(err)
+    });
 
     $scope.logOut = function () {
         $window.sessionStorage.clear();
@@ -230,7 +195,7 @@ angular.module('ngStocks').controller('dashboardController', ['$scope', 'stockSe
 angular.module('ngStocks').controller('dashboardOverviewController',['$stateParams','$scope',function($stateParams,$scope){
     $scope.generateGraph = function(symbol){
         $scope.$parent.currentGraph = $scope.dashboard.stocks[symbol].Graph;
-        console.log($scope.dashboard.stocks[symbol]);
+        console.log($scope.$parent.currentGraph,$scope.dashboard.stocks[symbol]);
         $('.stock-button').removeClass('active');
         $('#' + symbol).addClass('active');
 
@@ -286,6 +251,7 @@ angular.module('ngStocks').controller('registerController',['$scope','userServic
 }]);
 
 
+
 /**
  * API services called in controllers involving stocks
  */
@@ -304,9 +270,6 @@ app.service('stockService',['requestWrapper','API',function(requestWrapper,API){
         requestWrapper.makeRequest(action,URL,data,options,successCB,errorCB);
     };
 
-    var getUserStockCharts = function(action,URL,data,options,successCB,errorCB){
-        requestWrapper.makeRequest(action,URL,data,options,successCB,errorCB)
-    };
 
     var removeUserStock = function(action,URL,data,options,successCB,errorCB){
         requestWrapper.makeRequest(action,URL,data,options,successCB,errorCB)
@@ -316,7 +279,6 @@ app.service('stockService',['requestWrapper','API',function(requestWrapper,API){
         stockTickerAutoComplete:stockTickerAutoComplete,
         postStockSymbol:postStockSymbol,
         getUserStocks:getUserStocks,
-        getUserStockCharts:getUserStockCharts,
         removeUserStock:removeUserStock
     }
 }]);

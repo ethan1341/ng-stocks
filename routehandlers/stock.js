@@ -27,9 +27,15 @@ var stock = {
             if (success == undefined) {
                 res.send('FAILED');
             } else {
+                console.log()
                 utils.updateCollectionArray(User, 'userID', userID, 'stocks', stockData.Symbol, stockData).then(function (data) {
+                    console.log('erwerwe')
                    utils.getChart(stockData.Symbol).then(function(data){
+                       console.log('dfasdf')
                        stockData.Graph = data;
+                       res.send(stockData)
+                   },function(err){
+                        console.log(err)
                    })
                 });
             }
@@ -45,7 +51,6 @@ var stock = {
      * Returns current Users stock Array then retrieves information.
      * Uses async map
      */
-
     getUserStocks: function (req, res, next) {
         var userID = req.session.passport.user.userID;
         var url = 'http://dev.markitondemand.com/MODApis/Api/v2/Quote/json';
@@ -54,8 +59,20 @@ var stock = {
             for (var i = 0; i < data.stocks.length; i++) {
                 asyncUrls.push(data.stocks[i]);
             }
-            async.map(asyncUrls, stock.getContent, function (err, result) {
-                res.send(result);
+            async.map(asyncUrls, stock.getContent, function (err, stocks) {
+                var stockMap = {}
+                async.map(asyncUrls,stock.getCharts, function(err,charts){
+                    for(var i = 0; i < stocks.length;i++){
+                       var symbol = stocks[i].Symbol;
+                           stockMap[symbol] = stocks[i];
+                    }
+                    for(var j = 0; j < charts.length;j++){
+                       var symbol = charts[j].Elements[0].Symbol;
+                        stockMap[symbol].Graph = charts[j];
+                    }
+                    console.log(stockMap,'dfadf');
+                    res.send(stockMap);
+                });
             });
         })
     },
@@ -88,8 +105,6 @@ var stock = {
         });
     },
 
-
-
     /**
      *
      * @param req
@@ -98,7 +113,6 @@ var stock = {
      * Returns the chart data for all stock symbols
      * Uses async map
      */
-
     getUserStockCharts: function (req, res, next) {
         var userID = req.session.passport.user.userID;
         var asyncSymbols = [];
@@ -129,7 +143,6 @@ var stock = {
                 if (symbol == data.stocks[i]) {
                     data.stocks.splice(i, 1);
                     console.log(data.stocks, 'datastocks')
-
                 }
             }
             data.save(function (err, data) {

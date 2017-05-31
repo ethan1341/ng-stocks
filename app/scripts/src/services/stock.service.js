@@ -16,9 +16,6 @@ app.service('stockService',['requestWrapper','API',function(requestWrapper,API){
         requestWrapper.makeRequest(action,URL,data,options,successCB,errorCB);
     };
 
-    var getUserStockCharts = function(action,URL,data,options,successCB,errorCB){
-        requestWrapper.makeRequest(action,URL,data,options,successCB,errorCB)
-    };
 
     var removeUserStock = function(action,URL,data,options,successCB,errorCB){
         requestWrapper.makeRequest(action,URL,data,options,successCB,errorCB)
@@ -28,7 +25,6 @@ app.service('stockService',['requestWrapper','API',function(requestWrapper,API){
         stockTickerAutoComplete:stockTickerAutoComplete,
         postStockSymbol:postStockSymbol,
         getUserStocks:getUserStocks,
-        getUserStockCharts:getUserStockCharts,
         removeUserStock:removeUserStock
     }
 }]);

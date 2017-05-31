@@ -150,7 +150,7 @@ var utils = {
      */
     getChart: function (symbol) {
         var url = 'http://dev.markitondemand.com/Api/v2/InteractiveChart/json?&parameters={"Normalized":false,"NumberOfDays":15,"DataPeriod":"Day","Elements":[{"Symbol":"' + symbol + '",' + '"Type":"price","Params":["ohlc"]},{"Symbol":"' + symbol + '",' + '"Type":"volume"}]}&_=1432147464500'
-        new Promise(function (resolve,reject) {
+        return new Promise(function (resolve,reject) {
             utils.requestWrapper('get', url, {}, 'charts').then(function (data) {
                 if(data){
                     resolve(data);
