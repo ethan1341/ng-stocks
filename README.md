@@ -4,7 +4,7 @@ A mean stack app using the google finance/ markit api / passport session. Return
 
 Server
 
-The routes for my app can be found in server.js. Individual routes contain middleware function to keep the server.js more clean. The middleware functions can be found in routehandlers.js. I combined promises and standard queries for resusability, the queries are interchangable. API calls were combined using async.map to reduce calls from the client. Repeated functions such as getting user information and request wrappers can be found in the utils directory. I used passport authentication to ensure the client was logged in and had authentication middleware as the first function on every route for security.
+The routes for my app can be found in server.js. Individual routes contain middleware function to keep the server.js more clean. The middleware functions can be found in routehandlers directory. I combined promises and standard queries for resusability, the queries are interchangable. API calls were combined using async.map to reduce calls from the client. Repeated functions such as getting user information and request wrappers can be found in the utils directory. I used passport authentication to ensure the client was logged in. Authentication middleware was the first function on every route for security.
 
 Frontend
 
