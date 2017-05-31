@@ -8,6 +8,5 @@ angular.module('ngStocks').controller('dashboardOverviewController',['$statePara
         console.log($scope.$parent.currentGraph,$scope.dashboard.stocks[symbol]);
         $('.stock-button').removeClass('active');
         $('#' + symbol).addClass('active');
-
     };
 }]);

@@ -31,6 +31,11 @@ app.constant('SAMPLE_DATA', {
         name: 'Please select more symbols'
     }
 });
+app.filter('percentage', ['$filter', function ($filter) {
+    return function (input, decimals) {
+        return $filter('number')(input * 100, decimals) + '%';
+    };
+}]);
 /**
  * $State routing(angular.ui) uses abstracts for inheritance
  */
@@ -75,6 +80,23 @@ angular.module("ngStocks")
                 templateUrl: "app/html/error.html"
             });;
     });
+
+angular.module('ngStocks').directive('stockStatus', function () {
+    return {
+        restrict: 'E',
+        compile: function (ele, att) {
+            console.log('ran')
+        }, // DOM manipulation before the link function element is the directive element attr are the associated attributes
+        templateUrl: '/app/html/directives/stock-status.html',
+        scope: {stocks: '='},
+        link: function (scope, ele, attr) {
+            console.log(scope, 'scope');
+            console.log(ele, 'ele');
+            console.log(attr, 'att');
+        }
+
+    }
+});
 /**
  * The Parent Controller(Abstract) for profile and overview. Must functions will be called and ran in this controller for re-usability
  */
@@ -84,6 +106,7 @@ angular.module('ngStocks').controller('dashboardController', ['$scope', 'stockSe
     $scope.dashboard = {
         stocks: {}
     };
+
     $scope.currentGraph;
     $scope.returnedSymbols;
     $scope.graphMap = {};
@@ -163,6 +186,7 @@ angular.module('ngStocks').controller('dashboardController', ['$scope', 'stockSe
         });
         return deferred.promise;
     };
+
     /**
      * Removes stock by posting a symbol:HTML
      * @param symbol i.e  string:APPL
@@ -198,7 +222,6 @@ angular.module('ngStocks').controller('dashboardOverviewController',['$statePara
         console.log($scope.$parent.currentGraph,$scope.dashboard.stocks[symbol]);
         $('.stock-button').removeClass('active');
         $('#' + symbol).addClass('active');
-
     };
 }]);
 /**
@@ -249,7 +272,6 @@ angular.module('ngStocks').controller('redirectController',['userService','API',
 angular.module('ngStocks').controller('registerController',['$scope','userService','API',function($scope,userService,API){
 
 }]);
-
 
 
 /**

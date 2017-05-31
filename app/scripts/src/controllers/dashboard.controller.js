@@ -7,6 +7,7 @@ angular.module('ngStocks').controller('dashboardController', ['$scope', 'stockSe
     $scope.dashboard = {
         stocks: {}
     };
+
     $scope.currentGraph;
     $scope.returnedSymbols;
     $scope.graphMap = {};
@@ -86,6 +87,7 @@ angular.module('ngStocks').controller('dashboardController', ['$scope', 'stockSe
         });
         return deferred.promise;
     };
+
     /**
      * Removes stock by posting a symbol:HTML
      * @param symbol i.e  string:APPL

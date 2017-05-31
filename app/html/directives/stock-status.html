@@ -1,0 +1,88 @@
+<div ng-if="stocks.Change > 0">
+    <div class="col-lg-3">
+        <div class="ibox">
+            <div class="ibox-content">
+                <h5 class="m-b-md">{{stocks.Name}}</h5>
+                <h2 class="text-navy">
+                    <i class="fa fa-play fa-rotate-270"></i> Up
+                </h2>
+                <small>Stock Gained {{stocks.ChangePercent | number : 2}}</small>
+            </div>
+        </div>
+    </div>
+</div>
+<div ng-if="stocks.Change < 0">
+    <div class="col-lg-3">
+        <div class="ibox">
+            <div class="ibox-content">
+                <h5 class="m-b-md">{{stocks.Name}}</h5>
+                <h2 class="text-danger">
+                    <i class="fa fa-play fa-rotate-90"></i> Down
+                </h2>
+                <small>Stock Fell {{stocks.ChangePercent | number : 2}}</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div ng-if="stocks.ChangePercentYTD < 0">
+    <div class="col-lg-3">
+        <div class="ibox">
+            <div class="ibox-content">
+                <h5>Change % year to day</h5>
+                <h2>65%</h2>
+                <div class="progress progress-mini">
+                    <div style="width: {{stocks.ChangePercentYTD | number : 2}};" class="progress-bar"></div>
+                </div>
+
+                <div class="m-t-sm small">Server down since 4:32 pm.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-3">
+    <div class="ibox">
+        <div class="ibox-content">
+            <h5>Today's High</h5>
+            <h2>{{stocks.High}}%</h2>
+            <div class="progress progress-mini">
+                <div style="width: {{stocks.ChangePercentYTD | number : 2}};" class="progress-bar"></div>
+            </div>
+
+            <div class="m-t-sm small">Server down since 4:32 pm.</div>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-3">
+    <div class="ibox">
+        <div class="ibox-content">
+            <h5>Today's Low</h5>
+            <h2>{{stocks.Low}}</h2>
+            <div class="progress progress-mini">
+                <div style="width: {{stocks.ChangePercentYTD | number : 2}};" class="progress-bar"></div>
+            </div>
+
+            <div class="m-t-sm small">Server down since 4:32 pm.</div>
+        </div>
+    </div>
+</div>
+
+
+<div ng-if="stocks.ChangePercentYTD > 0">
+    <div class="col-lg-3">
+        <div class="ibox">
+            <div class="ibox-content">
+                <h5>Change % year to day</h5>
+                <h2>%{{stocks.ChangePercentYTD | number :0}}</h2>
+                <div class="progress progress-mini">
+                    <div style="15%" class="progress-bar"></div>
+                </div>
+
+                <div class="m-t-sm small">Server down since 4:32 pm.</div>
+            </div>
+        </div>
+    </div>
+</div>
