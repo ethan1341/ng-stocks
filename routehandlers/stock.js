@@ -19,7 +19,7 @@ var stock = {
      */
     stockLookUp: function (req, res, next) {
         var userID = req.session.passport.user.userID;
-        var params = {symbol: req.body.symbol}
+        var params = {symbol: req.body.symbol};
         var url = 'http://dev.markitondemand.com/MODApis/Api/v2/Quote/json';
         utils.requestWrapper('get', url, params, 'stocks').then(function (data) {
             var stockData = JSON.parse(data.body);
@@ -27,9 +27,10 @@ var stock = {
             if (success == undefined) {
                 res.send('FAILED');
             } else {
-                utils.updateCollectionArray(User, 'userID', userID, 'stocks', params.symbol).then(function (data) {
-                    console.log('HELLOERESRES')
-                    res.send(data)
+                utils.updateCollectionArray(User, 'userID', userID, 'stocks', stockData.Symbol, stockData).then(function (data) {
+                   utils.getChart(stockData.Symbol).then(function(data){
+                       stockData.Graph = data;
+                   })
                 });
             }
 
@@ -87,6 +88,8 @@ var stock = {
         });
     },
 
+
+
     /**
      *
      * @param req
@@ -122,13 +125,19 @@ var stock = {
         var symbol = req.body.symbol;
         utils.getUserInfo(userID).then(function (data) {
             for (var i = 0; i < data.stocks.length; i++) {
+                console.log(symbol, data.stocks[i])
                 if (symbol == data.stocks[i]) {
-                    data.stocks.splice(i, 1)
-                    data.save();
+                    data.stocks.splice(i, 1);
+                    console.log(data.stocks, 'datastocks')
+
                 }
             }
+            data.save(function (err, data) {
+                console.log(data, 'd', err);
+                res.send({complete: 'saved'});
+            });
         });
-        res.send({complete: 'saved'});
+
     }
 
 };

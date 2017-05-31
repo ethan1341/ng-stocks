@@ -4,7 +4,8 @@
 
 angular.module('ngStocks').controller('dashboardOverviewController',['$stateParams','$scope',function($stateParams,$scope){
     $scope.generateGraph = function(symbol){
-        $scope.$parent.currentGraph = $scope.graphMap[symbol];
+        $scope.$parent.currentGraph = $scope.dashboard.stocks[symbol].Graph;
+        console.log($scope.dashboard.stocks[symbol]);
         $('.stock-button').removeClass('active');
         $('#' + symbol).addClass('active');
 

@@ -2,8 +2,19 @@
  * The Parent Controller(Abstract) for profile and overview. Must functions will be called and ran in this controller for re-usability
  */
 
+/**
+ * IMPORTANT
+ * $scope.dashboard.stocks is what updates that STOCK TABLE
+ * $scope.graphMap contains ALL THE GRAPH DATA
+ * $scope.currentGraph contains the DATA FOR THE GRAPH WANTING TO BE DISPLAYED
+ * $scope.graphMap is also the map that shows the symbols in the small grey buttons
+ */
+
 angular.module('ngStocks').controller('dashboardController', ['$scope', 'stockService', '$q', 'API', '$window','SAMPLE_DATA','$state',function ($scope, stockService, $q, API, $window,SAMPLE_DATA,$state) {
-    $scope.dashboard = {};
+    $scope.dashboard = {
+        stocks:{}
+    };
+    $scope.currentGraph;
     $scope.returnedSymbols;
     $scope.graphMap = {};
     $scope.chart = SAMPLE_DATA.chart;
@@ -50,10 +61,16 @@ angular.module('ngStocks').controller('dashboardController', ['$scope', 'stockSe
 
         } else {
             stockService.postStockSymbol('POST', API.userStocks, data, {headers: {'Content-Type': 'application/json'}}, function (data) {
-                $scope.getStocks();
-                $scope.getStockCharts();
+                var stockSymbol = data.data.Symbol;
+                console.log(data);
+                if(data.data.status == 'existed'){
+                    console.log('existed');
+                }else{
+                    console.log('did not exist');
+                }
+
+                //$scope.getStockCharts();
             }, function (error) {
-                console.log('error', error)
             })
         }
 
@@ -65,7 +82,10 @@ angular.module('ngStocks').controller('dashboardController', ['$scope', 'stockSe
     $scope.getStocks = function () {
         var deferred = $q.defer();
         stockService.getUserStocks('GET', API.userStocks, {}, {}, function (data) {
-            $scope.dashboard.stocks = data.data;
+            for(var i = 0; i < data.data.length;i++){
+                var mapKey = data.data[i].Symbol;
+                $scope.dashboard.stocks[mapKey] = data.data[i];
+            };
             deferred.resolve($scope.dashboard.stocks);
         }, function (err) {
             deferred.reject(err)
@@ -79,12 +99,13 @@ angular.module('ngStocks').controller('dashboardController', ['$scope', 'stockSe
     $scope.removeStock = function (symbol) {
         console.log(symbol);
         stockService.removeUserStock('POST', API.removeStock, {symbol: symbol}, {headers: {'Content-Type': 'application/json'}}, function (data) {
-            console.log(data);
-            $scope.getStocks().then(function(){
-                $scope.getStockCharts();
-            });
-
+            for(var i = 0; i < $scope.dashboard.stocks.length;i++){
+              if($scope.dashboard.stocks[symbol].Symbol == symbol){
+                  delete $scope.dashboard.stocks[symbol]
+              }
+            };
         }, function (err) {
+            console.log(err);
         });
     };
     /**
@@ -93,27 +114,22 @@ angular.module('ngStocks').controller('dashboardController', ['$scope', 'stockSe
     $scope.getStockCharts = function () {
         console.log('e');
         stockService.getUserStockCharts('GET', API.stockCharts, {}, {}, function (data) {
-            console.log('f');
-            console.log(data.data.length,'length')
            if(data.data == '404'){
                $window.sessionStorage.clear();
                $state.go('login')
            };
             if (data.data.length == 0) {
-                console.log('0')
                 $scope.realGraph = false ;
-                console.log($scope.currentGraph,'graph');
             } else {
                 $scope.realGraph = true ;
-                $scope.graphMap = {};
                 for (var i = 0; i < data.data.length; i++) {
                     var symbol = data.data[i].Elements[0].Symbol;
                     var name = data.data[i].Elements[0].Name;
-                    $scope.graphMap[symbol] = data.data[i];
-                    $scope.graphMap[symbol].symbol = symbol
+                    console.log( $scope.dashboard.stocks);
+                    $scope.dashboard.stocks[symbol].Graph = data.data[i];
                 }
-                $scope.currentGraph = $scope.graphMap[data.data[0].Elements[0].Symbol];
-                console.log('this si current graph', $scope.graphMap);
+                $scope.currentGraph = $scope.dashboard.stocks[ data.data[0].Elements[0].Symbol ].Graph
+
             }
         }, function (error) {
             console.log(error)

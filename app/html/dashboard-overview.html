@@ -40,17 +40,18 @@
                     </div><!-- -->
 
 
-                    <div ng-if="realGraph == true">
+                    <div ng-if="realGraph !== false">
                         <div class="col-lg-12">
                             <div class="ibox float-e-margins">
                                 <div class="ibox-title">
-                                    <h5>Stock Price Chart: {{currentGraph}}</h5>
+                                    <h5>Stock Price Chart:</h5>
                                     <div class="pull-right">
-                                        <div class="btn-group" ng-repeat="symbol in graphMap">
+                                        <div class="btn-group" ng-repeat="symbol in dashboard.stocks">
+
                                             <button type="button" class="  stock-button btn btn-xs btn-white"
-                                                    id="{{symbol.symbol}}" ng-click="generateGraph(symbol.symbol)"
+                                                    id="{{symbol.Symbol}}" ng-click="generateGraph(symbol.Symbol)"
                                                     ng-class="{active: symbol.symbol == currentGraph.symbol}">
-                                                {{symbol.symbol}}
+                                                {{symbol.Symbol}}
                                             </button>
 
                                         </div>
